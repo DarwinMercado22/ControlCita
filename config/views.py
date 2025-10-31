@@ -31,13 +31,15 @@ def dashboard(request):
         citas_proximas = citas_proximas.filter(medico=request.user)
     
     # Consultas recientes
-    consultas_recientes = Consulta.objects.select_related(
+        consultas_recientes = Consulta.objects.select_related(
         'historia_clinica__paciente', 'medico'
-    ).order_by('-fecha_consulta')[:5]
-    
+    ).order_by('-fecha_consulta')
+
     if request.user.rol == 'MEDICO':
         consultas_recientes = consultas_recientes.filter(medico=request.user)
-    
+
+    consultas_recientes = consultas_recientes[:5]
+
     context = {
         'total_pacientes': total_pacientes,
         'total_medicos': total_medicos,
@@ -45,7 +47,7 @@ def dashboard(request):
         'citas_proximas': citas_proximas[:5],
         'consultas_recientes': consultas_recientes,
     }
-    
+
     return render(request, 'dashboard.html', context)
 
 @login_required
